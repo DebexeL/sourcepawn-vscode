@@ -12,6 +12,6 @@ setting:
 
 ```json
 {
-    "sourcepawnLanguageServer.sourcemod_home": "/path/to/sourcemod/include"
+  "sourcepawnLanguageServer.sourcemod_home": "/path/to/sourcemod/include"
 }
 ```

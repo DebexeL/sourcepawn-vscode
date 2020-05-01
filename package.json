@@ -1,77 +1,77 @@
 {
-    "name": "sourcepawn-vscode",
-    "displayName": "SourcePawn",
-    "description": "SourcePawn highlighting and autocompletion.",
-    "version": "0.1.4",
-    "publisher": "Dreae",
-    "main": "out/index",
-    "icon": "sm.png",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Dreae/sourcepawn-vscode.git"
-    },
-    "engines": {
-        "vscode": "^1.14.0"
-    },
-    "categories": [
-        "Languages"
-    ],
-    "activationEvents": [
-        "onLanguage:sourcepawn"
-    ],
-    "contributes": {
-        "configuration": {
-            "type": "object",
-            "title": "SourcePawn Language Server configuration",
-            "properties": {
-                "sourcepawnLanguageServer.sourcemod_home": {
-                    "type": "string",
-                    "description": "The location of the SourceMod API include files found in addons/sourcemod/scripting/include"
-                },
-                "sourcepawnLanguageServer.trace.server": {
-                    "type": "string",
-                    "enum": [
-                        "off",
-                        "messages",
-                        "verbose"
-                    ],
-                    "default": "off",
-                    "description": "Traces the communication between VSCode and the language server service."
-                }
-            }
+  "name": "sourcepawn-vscode",
+  "displayName": "SourcePawn",
+  "description": "SourcePawn highlighting and autocompletion.",
+  "version": "0.1.4",
+  "publisher": "Dreae",
+  "main": "out/index",
+  "icon": "sm.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dreae/sourcepawn-vscode.git"
+  },
+  "engines": {
+    "vscode": "^1.14.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:sourcepawn"
+  ],
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "SourcePawn Language Server configuration",
+      "properties": {
+        "sourcepawnLanguageServer.sourcemod_home": {
+          "type": "string",
+          "description": "The location of the SourceMod API include files found in addons/sourcemod/scripting/include"
         },
-        "languages": [
-            {
-                "id": "sourcepawn",
-                "aliases": [
-                    "SourcePawn",
-                    "sourcepawn"
-                ],
-                "extensions": [
-                    ".sp",
-                    ".inc"
-                ],
-                "configuration": "./language-configuration.json"
-            }
+        "sourcepawnLanguageServer.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VSCode and the language server service."
+        }
+      }
+    },
+    "languages": [
+      {
+        "id": "sourcepawn",
+        "aliases": [
+          "SourcePawn",
+          "sourcepawn"
         ],
-        "grammars": [
-            {
-                "language": "sourcepawn",
-                "scopeName": "source.sourcepawn",
-                "path": "./syntaxes/sourcepawn.tmLanguage.json"
-            }
-        ]
-    },
-    "dependencies": {
-        "glob": "^7.1.2",
-        "vscode": "^1.1.4",
-        "vscode-languageclient": "^3.3.0"
-    },
-    "devDependencies": {
-        "@types/node": "^8.0.14",
-        "typescript": "^2.4.2"
-    },
-    "scripts": {
-        "pkgvars": "node ./node_modules/vscode/bin/install"
-    }
+        "extensions": [
+          ".sp",
+          ".inc"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "sourcepawn",
+        "scopeName": "source.sourcepawn",
+        "path": "./syntaxes/sourcepawn.tmLanguage.json"
+      }
+    ]
+  },
+  "dependencies": {
+    "glob": "^7.1.6",
+    "vscode": "^1.1.37",
+    "vscode-languageclient": "^6.1.3"
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.4",
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "pkgvars": "node ./node_modules/vscode/bin/install"
+  }
 }

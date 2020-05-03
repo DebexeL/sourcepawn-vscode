@@ -9,11 +9,13 @@ import {
   Files,
 } from "vscode-languageserver";
 
+import { TextDocument } from "vscode-languageserver-textdocument";
+
 import { parse_blob, parse_file } from "./parser";
 
 import * as glob from "glob";
 import * as path from "path";
-import Uri from "vscode-uri";
+import { URI } from "vscode-uri";
 import * as fs from "fs";
 
 export interface Completion {
@@ -170,10 +172,10 @@ export class FileCompletions {
 
       let inc_file = path.resolve(base_directory, uri);
       if (fs.existsSync(inc_file)) {
-        uri = Uri.file(inc_file).toString();
+        uri = URI.file(inc_file).toString();
         this.add_include(uri);
       } else {
-        uri = Uri.file(path.resolve(file + ".sp")).toString();
+        uri = URI.file(path.resolve(file + ".sp")).toString();
         this.add_include(uri);
       }
     }
@@ -182,9 +184,9 @@ export class FileCompletions {
 
 export class CompletionRepository {
   completions: Map<string, FileCompletions>;
-  documents: TextDocuments;
+  documents: TextDocuments<TextDocument>;
 
-  constructor(documents: TextDocuments) {
+  constructor(documents: TextDocuments<TextDocument>) {
     this.completions = new Map();
     this.documents = documents;
 
@@ -192,7 +194,7 @@ export class CompletionRepository {
     documents.onDidChangeContent(this.handle_document_change.bind(this));
   }
 
-  handle_document_change(event: TextDocumentChangeEvent) {
+  handle_document_change(event: TextDocumentChangeEvent<TextDocument>) {
     let completions = new FileCompletions(event.document.uri);
     parse_blob(event.document.getText(), completions);
 
@@ -219,7 +221,7 @@ export class CompletionRepository {
   parse_sm_api(sourcemod_home: string) {
     glob(path.join(sourcemod_home, "**/*.inc"), (err, files) => {
       for (let file of files) {
-        let completions = new FileCompletions(Uri.file(file).toString());
+        let completions = new FileCompletions(URI.file(file).toString());
         parse_file(file, completions);
 
         let uri =
@@ -265,7 +267,7 @@ export class CompletionRepository {
   get_all_completions(file: string): Completion[] {
     let completions = this.completions.get(file);
 
-    let includes = new Set();
+    let includes: Set<string> = new Set();
     this.get_included_files(completions, includes);
 
     return [...includes]
@@ -300,58 +302,58 @@ export class CompletionRepository {
   }
 
   get_signature(position: TextDocumentPositionParams): SignatureHelp {
-    let document = this.documents.get(position.textDocument.uri);
-    if (document) {
-      let { method, parameter_count } = (() => {
-        let line = document.getText().split("\n")[position.position.line];
-
-        if (line[position.position.character - 1] === ")") {
-          // We've finished this call
-          return { method: undefined, parameter_count: 0 };
-        }
-
-        let method = "";
-        let end_parameters = false;
-        let parameter_count = 0;
-
-        for (let i = position.position.character; i >= 0; i--) {
-          if (end_parameters) {
-            if (line[i].match(/[A-Za-z0-9_]/)) {
-              method = line[i] + method;
-            } else {
-              break;
-            }
-          } else {
-            if (line[i] === "(") {
-              end_parameters = true;
-            } else if (line[i] === ",") {
-              parameter_count++;
-            }
-          }
-        }
-
-        return { method, parameter_count };
-      })();
-
-      let completions = this.get_all_completions(
-        position.textDocument.uri
-      ).filter((completion) => {
-        return completion.name === method;
-      });
-
-      if (completions.length > 0) {
-        return {
-          signatures: [completions[0].get_signature()],
-          activeParameter: parameter_count,
-          activeSignature: 0,
-        };
-      }
-    }
-
-    return {
+    let payload: SignatureHelp = {
       signatures: [],
       activeSignature: 0,
       activeParameter: 0,
     };
+    let document = this.documents.get(position.textDocument.uri);
+    if (!document) return payload;
+    let { method, parameter_count } = (() => {
+      let line = document.getText().split("\n")[position.position.line];
+
+      if (line[position.position.character - 1] === ")") {
+        // We've finished this call
+        return { method: undefined, parameter_count: 0 };
+      }
+
+      let method = "";
+      let end_parameters = false;
+      let parameter_count = 0;
+
+      for (let i = position.position.character; i >= 0; i--) {
+        if (end_parameters) {
+          if (line[i].match(/[A-Za-z0-9_]/)) {
+            method = line[i] + method;
+          } else {
+            break;
+          }
+        } else {
+          if (line[i] === "(") {
+            end_parameters = true;
+          } else if (line[i] === ",") {
+            parameter_count++;
+          }
+        }
+      }
+
+      return { method, parameter_count };
+    })();
+
+    let completions = this.get_all_completions(
+      position.textDocument.uri
+    ).filter((completion) => {
+      return completion.name === method;
+    });
+
+    if (completions.length > 0) {
+      payload = {
+        signatures: [completions[0].get_signature()],
+        activeParameter: parameter_count,
+        activeSignature: 0,
+      };
+    }
+
+    return payload;
   }
 }

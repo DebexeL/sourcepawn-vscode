@@ -9,6 +9,8 @@ import {
   TextDocumentSyncKind,
 } from "vscode-languageserver";
 
+import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import * as glob from "glob";
 import * as path from "path";
 
@@ -19,7 +21,7 @@ let connection = createConnection(
   new IPCMessageReader(process),
   new IPCMessageWriter(process)
 );
-let documents = new TextDocuments();
+let documents = new TextDocuments(TextDocument);
 documents.listen(connection);
 
 let completions = new CompletionRepository(documents);
@@ -31,7 +33,7 @@ connection.onInitialize((params) => {
 
   return {
     capabilities: {
-      textDocumentSync: documents.syncKind,
+      textDocumentSync: TextDocumentSyncKind.Full,
       completionProvider: {
         resolveProvider: false,
       },

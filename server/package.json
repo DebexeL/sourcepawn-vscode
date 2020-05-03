@@ -8,16 +8,16 @@
     "node": "*"
   },
   "dependencies": {
-    "@types/glob": "^5.0.30",
-    "@types/uuid": "^3.4.0",
-    "glob": "^7.1.2",
-    "uuid": "^3.1.0",
-    "vscode-languageserver": "^3.3.0",
-    "vscode-uri": "^1.0.1"
+    "@types/glob": "^7.1.1",
+    "@types/uuid": "^7.0.3",
+    "glob": "^7.1.6",
+    "uuid": "^8.0.0",
+    "vscode-languageserver": "^6.1.1",
+    "vscode-uri": "^2.1.1"
   },
   "devDependencies": {
-    "@types/node": "^8.0.14",
-    "typescript": "^2.4.2"
+    "@types/node": "^13.13.4",
+    "typescript": "^3.8.3"
   },
   "scripts": {
     "compile": "installServerIntoExtension ../out ./package.json ./tsconfig.json && tsc -p .",
